@@ -1,0 +1,83 @@
+#+TITLE: Big Data
+#+STARTUP: overview
+#+AUTHOR: Shuo Tan
+#+OPTIONS: num:nil
+#+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
+#+SETUPFILE: ~/.emacs.d/org/setup/minimal
+#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/github.css" />
+
+* Setup Apache Big Data on MacOS
+The hadoop ecosystem requires ssh to work without password.
+
+Enable remote login by =Preferences->Sharing->Remote Login=.
+
+Add ssh key to local ssh configs:
+#+BEGIN_SRC bash
+  ssh-keygen -t rsa
+  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+#+END_SRC
+
+** Hadoop
+Use *brew* to install hadoop =`brew install hadoop`=.
+
+Configure hadoop to run in [[https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html][pseudo-distributed mode]].
+
+=core-site.xml=
+#+BEGIN_SRC xml
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://localhost:9000</value>
+  </property>
+</configuration>
+#+END_SRC
+
+=hdfs-site.xml=
+#+BEGIN_SRC xml
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+</configuration>
+#+END_SRC
+
+=mapred-site.xml=
+#+BEGIN_SRC xml
+<configuration>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration>
+#+END_SRC
+
+=yarn-site.xml=
+#+BEGIN_SRC xml
+<configuration>
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+</configuration>
+#+END_SRC
+
+** HBase
+Use *brew* to install hbase =`brew install hbase`=.
+
+Configure hbase to run in [[http://hbase.apache.org/book.html#standalone.over.hdfs][standalone over hdfs mode]].
+
+=hbase-site.xml=
+#+BEGIN_SRC xml
+  <configuration>
+    <property>
+      <name>hbase.rootdir</name>
+      <value>hdfs://localhost:9000/hbase</value>
+    </property>
+    <property>
+      <name>hbase.cluster.distributed</name>
+      <value>false</value>
+    </property>
+  </configuration>
+#+END_SRC
+

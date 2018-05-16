@@ -2,13 +2,15 @@
 #+STARTUP: overview
 #+AUTHOR: Shuo Tan
 #+OPTIONS: num:nil
-#+SETUPFILE: ~/code/mysite/org-theme-setup/solarized-light.setup
+#+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
+#+SETUPFILE: ~/.emacs.d/org/setup/minimal
+#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/github.css" />
 
 * Setup IPython Environment
 ** Usage of ob-ipython
 My [[https://github.com/shuo-tan/dotemacs/blob/master/lisp/init-org.el][dotemacs]] contains basic setup for ipython inside Emacs.
 
-In [[https://github.com/gregsexton/ob-ipython][ob-ipython]] there's code snippet for displaying table in org-mode table format:
+Here [[https://github.com/gregsexton/ob-ipython][ob-ipython]] has snippet for displaying table in org-mode table format:
 #+NAME: formatter
 #+BEGIN_SRC python
   import IPython
@@ -26,10 +28,11 @@ In [[https://github.com/gregsexton/ob-ipython][ob-ipython]] there's code snippet
   ip.display_formatter.formatters['text/org'] = OrgFormatter()
 #+END_SRC
 
-Create a file named =00-orgmode.py= under =~/.ipython/profile_default/startup= contains [[formatter][the code]] would do the job.
+Save to =00-orgmode.py= under =~/.ipython/profile_default/startup=.
 
-** Matplotlib axis in dark theme
-The best solution to this is to use seaborn.
+** Matplotlib image axis illegible in dark theme
+Use seaborn dark grid instead.
+
 #+BEGIN_SRC python
   import seaborn as sns
   sns.set_style('darkgrid')

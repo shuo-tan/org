@@ -3,7 +3,7 @@
 #+AUTHOR: Shuo Tan
 #+OPTIONS: num:nil
 #+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
-#+SETUPFILE: ~/.emacs.d/org/setup/minimal
+#+SETUPFILE: ~/.emacs.d/org/setup/worg
 #+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/github.css" />
 
 * Setup Hadoop and HBase on localhost
@@ -18,12 +18,16 @@ Add ssh key to local ssh configs:
   cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 #+END_SRC
 
-** Choose Hadoop and HBase versions
+** Choose versions
+Hadoop and HBase verions must match to avoid issues.
+
 See the compatibility [[http://hbase.apache.org/book.html#hadoop][matrix]].
 
 ** Hadoop
 *** Build from source
 You can either use the built hadoop or replace a existing hadoop with native libraries[fn:1].
+
+*Warning*: Running without native libraries is painfully *slow*.
 
 Get hadoop source:
 #+BEGIN_SRC bash
@@ -58,6 +62,8 @@ Compile:
 #+BEGIN_SRC bash
   mvn package -Pdist,native -DskipTests -Dtar
 #+END_SRC
+
+Result at hadoop-dist/target/
 
 [fn:1] The native libs reside at hadoop-dist/target/hadoop-2.7.6/lib/native.
 
@@ -108,7 +114,7 @@ Make hadoop to run in [[https://hadoop.apache.org/docs/stable/hadoop-project-dis
   </configuration>
 #+END_SRC
 
-*** Start
+*** Start service
 Before start service, format name node:
 #+BEGIN_SRC bash
   hdfs namenode -format
@@ -126,8 +132,24 @@ To see all the ports listening:
 #+END_SRC
 
 ** HBase
-Use *brew* to install hbase =`brew install hbase`=.
+*** Build from source
+Download source:
+#+BEGIN_SRC bash
+  git clone https://github.com/apache/hbase.git
+  cd hbase
+  git checkout branch-1.3
+#+END_SRC
 
+Check [[*Build from source][here]] for toolchain installation.
+
+Compile:
+#+BEGIN_SRC bash
+  mvn package -DskipTests assembly:single
+#+END_SRC
+
+Result at hbase-assembly/target/
+
+*** Configuration
 Configure hbase to run in [[http://hbase.apache.org/book.html#standalone.over.hdfs][standalone over hdfs mode]].
 
 =hbase-site.xml=
@@ -141,6 +163,31 @@ Configure hbase to run in [[http://hbase.apache.org/book.html#standalone.over.hd
       <name>hbase.cluster.distributed</name>
       <value>false</value>
     </property>
+    <property>
+      <name>hbase.zookeeper.property.dataDir</name>
+      <value>/Users/ts/apache/tmp/zookeeper</value>
+    </property>
   </configuration>
 #+END_SRC
 
+*** Start service
+Start hbase service:
+#+BEGIN_SRC bash
+  start-hbase.sh
+#+END_SRC
+
+To use native hadoop libraries, add following to =hbase-env.sh=.
+#+BEGIN_SRC bash
+  export JAVA_LIBRARY_PATH=/Users/ts/apache/hadoop/lib/native
+#+END_SRC
+
+** Thrift on HBase
+To use thrift/thrift2 with hbase, either start thrift server foreground:
+#+BEGIN_SRC bash
+  hbase thrift start -p 9090
+#+END_SRC
+
+or with daemon:
+#+BEGIN_SRC bash
+  hbase-daemon.sh start thrift
+#+END_SRC

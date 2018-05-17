@@ -13,13 +13,20 @@ My [[https://github.com/shuo-tan/dotemacs/blob/master/lisp/init-org.el][dotemacs
 Here [[https://github.com/gregsexton/ob-ipython][ob-ipython]] has snippet for displaying table in org-mode table format:
 #+NAME: formatter
 #+BEGIN_SRC python
+  import collections
   import IPython
   from tabulate import tabulate
+
 
   class OrgFormatter(IPython.core.formatters.BaseFormatter):
       def __call__(self, obj):
           try:
-              return tabulate(obj, headers='keys',
+              target = obj
+              if isinstance(obj, collections.Iterable):
+                  target = list(obj)
+                  if all([isinstance(x, str) for x in target]):
+                      target = [[x] for x in target]
+              return tabulate(target, headers='keys',
                               tablefmt='orgtbl', showindex='always')
           except:
               return None

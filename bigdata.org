@@ -6,7 +6,8 @@
 #+SETUPFILE: ~/.emacs.d/org/setup/minimal
 #+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/github.css" />
 
-* Setup Apache Big Data on MacOS
+* Setup Hadoop and HBase on localhost
+** SSH Setup
 The hadoop ecosystem requires ssh to work without password.
 
 Enable remote login by =Preferences->Sharing->Remote Login=.
@@ -17,49 +18,111 @@ Add ssh key to local ssh configs:
   cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 #+END_SRC
 
-** Hadoop
-Use *brew* to install hadoop =`brew install hadoop`=.
+** Choose Hadoop and HBase versions
+See the compatibility [[http://hbase.apache.org/book.html#hadoop][matrix]].
 
-Configure hadoop to run in [[https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html][pseudo-distributed mode]].
+** Hadoop
+*** Build from source
+You can either use the built hadoop or replace a existing hadoop with native libraries[fn:1].
+
+Get hadoop source:
+#+BEGIN_SRC bash
+  git clone https://github.com/apache/hadoop.git
+  cd hadoop
+  git checkout branch-2.7.6
+#+END_SRC
+
+Install toolchain:
+#+BEGIN_SRC bash
+  brew install cmake
+  brew install zlib
+  brew install protobuf@2.5
+  brew install snappy
+  brew install openssl
+#+END_SRC
+
+Modify environment:
+#+BEGIN_SRC bash
+  # prtobuf
+  export PATH="/usr/local/opt/protobuf@2.5/bin:$PATH"
+
+  # openssl
+  export OPENSSL_ROOT_DIR="/usr/local/opt/openssl"
+  export LDFLAGS="-L${OPENSSL_ROOT_DIR}/lib"
+  export CPPFLAGS="-I${OPENSSL_ROOT_DIR}/include"
+  export PKG_CONFIG_PATH="${OPENSSL_ROOT_DIR}/lib/pkgconfig"
+  export OPENSSL_INCLUDE_DIR="${OPENSSL_ROOT_DIR}/include"
+#+END_SRC
+
+Compile:
+#+BEGIN_SRC bash
+  mvn package -Pdist,native -DskipTests -Dtar
+#+END_SRC
+
+[fn:1] The native libs reside at hadoop-dist/target/hadoop-2.7.6/lib/native.
+
+*** Configuration
+Make hadoop to run in [[https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html][pseudo-distributed mode]].
 
 =core-site.xml=
 #+BEGIN_SRC xml
-<configuration>
-  <property>
-    <name>fs.defaultFS</name>
-    <value>hdfs://localhost:9000</value>
-  </property>
-</configuration>
+  <configuration>
+    <property>
+      <name>fs.defaultFS</name>
+      <value>hdfs://localhost:9000</value>
+    </property>
+  </configuration>
 #+END_SRC
 
 =hdfs-site.xml=
 #+BEGIN_SRC xml
-<configuration>
-  <property>
-    <name>dfs.replication</name>
-    <value>1</value>
-  </property>
-</configuration>
+  <configuration>
+    <property>
+      <name>hadoop.tmp.dir</name>
+      <value>/Users/ts/apache/tmp/hadoop</value>
+    </property>
+    <property>
+      <name>dfs.replication</name>
+      <value>1</value>
+    </property>
+  </configuration>
 #+END_SRC
 
 =mapred-site.xml=
 #+BEGIN_SRC xml
-<configuration>
-  <property>
-    <name>mapreduce.framework.name</name>
-    <value>yarn</value>
-  </property>
-</configuration>
+  <configuration>
+    <property>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
+    </property>
+  </configuration>
 #+END_SRC
 
 =yarn-site.xml=
 #+BEGIN_SRC xml
-<configuration>
-  <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-  </property>
-</configuration>
+  <configuration>
+    <property>
+      <name>yarn.nodemanager.aux-services</name>
+      <value>mapreduce_shuffle</value>
+    </property>
+  </configuration>
+#+END_SRC
+
+*** Start
+Before start service, format name node:
+#+BEGIN_SRC bash
+  hdfs namenode -format
+#+END_SRC
+
+Start hadoop:
+#+BEGIN_SRC bash
+  start-all.sh
+#+END_SRC
+
+Check if all the processes are running using =`jps`=.
+To see all the ports listening:
+#+BEGIN_SRC bash
+  sudo lsof -nP -iTCP -sTCP:LISTEN
 #+END_SRC
 
 ** HBase

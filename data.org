@@ -1,10 +1,11 @@
-#+TITLE: Big Data
+#+TITLE: Data
 #+STARTUP: overview
 #+AUTHOR: Shuo Tan
 #+OPTIONS: num:nil
 #+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
-#+SETUPFILE: ~/.emacs.d/org/setup/worg
-#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/github.css" />
+#+SETUPFILE: ~/.emacs.d/org/setup/bigblow
+#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/googlecode.css" />
+#+HTML_HEAD: <style type="text/css"> pre,code {font-family: "Monaco", "Source Code Pro", "Consolas", "Ubuntu Mono", "Courier New", monospace;} </style>
 
 * Setup Hadoop and HBase on localhost
 ** SSH Setup
@@ -25,7 +26,7 @@ See the compatibility [[http://hbase.apache.org/book.html#hadoop][matrix]].
 
 ** Hadoop
 *** Build from source
-You can either use the built hadoop or replace a existing hadoop with native libraries[fn:1].
+You can either use the built hadoop or replace a existing hadoop with native libraries[fn::The native libs reside at hadoop-dist/target/hadoop-2.7.6/lib/native].
 
 *Warning*: Running without native libraries is painfully *slow*.
 
@@ -64,8 +65,6 @@ Compile:
 #+END_SRC
 
 Result at hadoop-dist/target/
-
-[fn:1] The native libs reside at hadoop-dist/target/hadoop-2.7.6/lib/native.
 
 *** Configuration
 Make hadoop to run in [[https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html][pseudo-distributed mode]].

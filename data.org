@@ -2,10 +2,6 @@
 #+STARTUP: overview
 #+AUTHOR: Shuo Tan
 #+OPTIONS: num:nil
-#+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
-#+SETUPFILE: ~/.emacs.d/org/setup/bigblow
-#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/googlecode.css" />
-#+HTML_HEAD: <style type="text/css"> pre,code {font-family: "Monaco", "Source Code Pro", "Consolas", "Ubuntu Mono", "Courier New", monospace;} </style>
 
 * Setup Hadoop and HBase on localhost
 ** SSH Setup

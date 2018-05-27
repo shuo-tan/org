@@ -1,0 +1,41 @@
+#+TITLE: Scala
+#+STARTUP: overview
+#+AUTHOR: Shuo Tan
+#+OPTIONS: num:nil
+#+SETUPFILE: ~/.emacs.d/org/setup/highlightjs
+#+SETUPFILE: ~/.emacs.d/org/setup/bigblow
+#+HTML_HEAD: <link rel="stylesheet" href="https://shuo-tan.github.io/themes/hl/styles/googlecode.css" />
+#+HTML_HEAD: <style type="text/css"> pre,code {font-family: "Monaco", "Source Code Pro", "Consolas", "Ubuntu Mono", "Courier New", monospace;} </style>
+
+* Setup Ensime for Emacs
+** Server
+First install sbt by =brew install sbt=.
+To use mirrors in China, change =~/.sbt/repositories= to:
+#+BEGIN_SRC
+[repositories]
+  local
+  typesafe: http://repo.typesafe.com/typesafe/ivy-releases/, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
+  aliyun: http://maven.aliyun.com/nexus/content/groups/public/
+#+END_SRC
+
+Add ensime plugin as global plugin in =~/.sbt/1.0/plugins/plugins.sbt=:
+#+BEGIN_SRC
+addSbtPlugin("org.ensime" % "sbt-ensime" % "2.6.0")
+#+END_SRC
+
+Change to project directory and run =sbt ensimeConfig= to generate .ensime file.
+Remember to re-run =ensimeConfig= everytime after you changed your =build.sbt=.
+This can also be done from the client side using =ensime-refresh-config=.
+
+** Client
+Checkout dotemacs config =init-scala.el= for details.
+
+Debugging Scala:
+- Start sbt-mode(and compile) by =C-c C-b c=.
+- Switch to sbt buffer and run =ensimeRunConfig package.Class=.
+- Switch back to source and set break point using =C-c C-d b=, you'll see '... pending...'.
+- Attach to debugger using =ensime-db-attach= and program should stop at the first break point.
+
+Trouble Shooting:
+- In sbt-mode, use =C-c C-j= to fire an EOL to sbt.
+- If the class under debugging is not inside a package, break points would not work.

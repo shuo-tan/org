@@ -41,3 +41,10 @@ Use seaborn dark grid instead.
   import seaborn as sns
   sns.set_style('darkgrid')
 #+END_SRC
+* Unicode HowTo
+Use =C-x 8 RET= and enter Hex code.
+
+Use =C-x == to show character info at point.
+
+Use =C-q <key>= to enter control character.
+

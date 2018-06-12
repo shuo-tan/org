@@ -1,0 +1,17 @@
+#+TITLE: Haskell
+#+STARTUP: overview
+#+AUTHOR: Shuo Tan
+#+OPTIONS: num:nil
+
+* Setup Haskell in Emacs
+First check [[https://github.com/shuo-tan/dotemacs/blob/master/lisp/init-haskell.el][here]] for emacs configuration.
+
+Modern haskell uses [[https://docs.haskellstack.org/en/stable/README/][stack]] to handle package and build process.
+Follow above link to setup stack and use a mirror like [[https://github.com/shuo-tan/scripts/blob/master/config.yaml][this]].
+
+Remember to install hindent, hlint and stylish-haskell for Emacs/IntelliJ plugins.
+#+BEGIN_SRC sh
+  stack install hlint hindent stylish-haskell
+#+END_SRC
+
+Also you need to add =~/.local/bin= into your $PATH.

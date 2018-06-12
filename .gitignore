@@ -27,5 +27,7 @@ Temporary Items
 
 # Org
 *.html
+*.md
+images/
 test*
 rst/

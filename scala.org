@@ -35,3 +35,5 @@ Debugging Scala:
 Trouble Shooting:
 - In sbt-mode, use =C-c C-j= to fire an EOL to sbt.
 - If the class under debugging is not inside a package, break points would not work.
+- Had you found ensime shows disconnected, consider =ensime-refresh-config=.
+  Actually you should do it everytime you've changed =build.sbt=.
